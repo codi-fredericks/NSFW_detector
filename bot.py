@@ -6,6 +6,8 @@ import os
 import dotenv
 import url_detect
 import json
+from typing import Union
+import time
 
 dotenv.load_dotenv()
 LOG_FILE = "log_channels.json"
@@ -90,6 +92,7 @@ async def log_embed(message:discord.message, values, url):
     embed.add_field(name="Person:", value=f'<@{message.author.id}>', inline=False)
     embed.add_field(name="Image:", value=f"||{url}||", inline=False)
     embed.add_field(name="Values:", value="\n".join(f"- __**{item['class']}**__: {item['score'] * 100:.1f}%" for item in values))
+    embed.timestamp = message.created_at
     return embed
 
 async def check(message):
@@ -136,7 +139,7 @@ async def on_message_edit(before, message):
 
 @bt.command()
 @app_commands.default_permissions(administrator=True)
-async def setlog(interaction:discord.Interaction, channel: discord.TextChannel):
+async def setlog(interaction:discord.Interaction, channel: Union[discord.TextChannel, discord.Thread] ):
     set_log_channel(interaction.guild.id, channel.id)
     try:
         ok = await bot.fetch_channel(channel.id)
