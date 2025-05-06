@@ -42,8 +42,9 @@ class bot(commands.Bot): # define the bot
     
     async def on_ready(self):
         await bot.wait_until_ready()
-
-        await sync_commands()
+        await self.change_presence(status=discord.Status.invisible)
+        # await sync_commands()
+        print(f'We have logged in as {bot.user}')
         
 
 
