@@ -1,4 +1,3 @@
-#https://cdn.discordapp.com/attachments/1368034531579269124/1368034575309344838/f_002d6d.png?ex=6816c0fb&is=68156f7b&hm=920b2368cb5926e10e83ec44435b961794567715f01daca8eb2e6b1e8372e6d5&
 import requests
 from PIL import Image,  ImageSequence
 from io import BytesIO
