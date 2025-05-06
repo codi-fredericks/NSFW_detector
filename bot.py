@@ -45,7 +45,6 @@ class bot(commands.Bot): # define the bot
         await self.change_presence(status=discord.Status.invisible)
         # await sync_commands()
         print(f'We have logged in as {bot.user}')
-        
 
 
 async def sync_commands():
@@ -101,15 +100,17 @@ async def check(message):
                 if value == False:
                     pass
                 else:
-                    await logs.send(embed=(await log_embed(message, value, attachment.proxy_url)))
                     await message.delete()
+                    await logs.send(embed=(await log_embed(message, value, attachment.proxy_url)))
+                    
             if attachment.content_type.startswith("video"):
                 value = await url_detect.process_video_from_url(attachment.proxy_url , labels)
                 if value == False:
                     pass
                 else:
-                    await logs.send(embed=(await log_embed(message, value, attachment.proxy_url)))
                     await message.delete()
+                    await logs.send(embed=(await log_embed(message, value, attachment.proxy_url)))
+                    
     if message.embeds:
         for embed in message.embeds:
             if embed.video.proxy_url:
@@ -117,23 +118,26 @@ async def check(message):
                 if value == False:
                     pass
                 else:
-                    await logs.send(embed=(await log_embed(message, value, embed.video.proxy_url)))
                     await message.delete()
+                    await logs.send(embed=(await log_embed(message, value, embed.video.proxy_url)))
+                    
             if embed.image.url:
                 value = await url_detect.detect_from_url(embed.image.proxy_url , labels)
                 if value == False:
                     pass
                 else:
-                    await logs.send(embed=(await log_embed(message, value, embed.image.proxy_url)))
                     await message.delete()
+                    await logs.send(embed=(await log_embed(message, value, embed.image.proxy_url)))
+                    
                     return
             if embed.thumbnail.url:
                 value = await url_detect.detect_from_url(embed.thumbnail.proxy_url , labels)
                 if value == False:
                     pass
                 else:
-                    await logs.send(embed=(await log_embed(message, value, embed.thumbnail.proxy_url)))
                     await message.delete()
+                    await logs.send(embed=(await log_embed(message, value, embed.thumbnail.proxy_url)))
+                    
 @bot.event
 async def on_message(message):
     await check(message)
