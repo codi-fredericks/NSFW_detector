@@ -44,15 +44,12 @@ class bot(commands.Bot): # define the bot
         await bot.wait_until_ready()
 
         await sync_commands()
-        await self.change_presence(status=discord.Status.invisible)
-        print(f'We have logged in as {bot.user}')
+        
 
 
 async def sync_commands():
-    print("COMMAND SYNC: Syncing commands...")
     # Syncing global commands
     global_commands = await bot.tree.sync()
-    print(f"COMMAND SYNC: Global commands synced: {len(global_commands)}")
 
     # Optionally, clean up any commands that no longer exist
     commands_to_remove = []
@@ -61,13 +58,10 @@ async def sync_commands():
             commands_to_remove.append(command)
 
     if commands_to_remove:
-        print("COMMAND SYNC: Removing outdated commands...")
         for command in commands_to_remove:
             await bot.tree.remove_command(command.name)
-            print(f"Removed command: {command.name}")
 
 
-    print("COMMAND SYNC: Commands fully synced and cleaned!")
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -78,11 +72,8 @@ bot = bot(
         )
 bt = bot.tree
 labels = [
-
-        "BUTTOCKS_EXPOSED",
         "FEMALE_BREAST_EXPOSED",
         "FEMALE_GENITALIA_EXPOSED",
-        "MALE_BREAST_EXPOSED",
         "ANUS_EXPOSED",
         "MALE_GENITALIA_EXPOSED",
     ]
@@ -105,14 +96,28 @@ async def check(message):
     if message.attachments:
         for attachment in message.attachments:
             if attachment.content_type.startswith("image"):
-                value = await url_detect.detect_from_url(attachment.url, labels)
+                value = await url_detect.detect_from_url(attachment.proxy_url, labels)
                 if value == False:
                     pass
                 else:
-                    await logs.send(embed=(await log_embed(message, value, attachment.url)))
+                    await logs.send(embed=(await log_embed(message, value, attachment.proxy_url)))
+                    await message.delete()
+            if attachment.content_type.startswith("video"):
+                value = await url_detect.process_video_from_url(attachment.proxy_url , labels)
+                if value == False:
+                    pass
+                else:
+                    await logs.send(embed=(await log_embed(message, value, attachment.proxy_url)))
                     await message.delete()
     if message.embeds:
         for embed in message.embeds:
+            if embed.video.proxy_url:
+                value = await url_detect.process_video_from_url(embed.video.proxy_url , labels)
+                if value == False:
+                    pass
+                else:
+                    await logs.send(embed=(await log_embed(message, value, embed.video.proxy_url)))
+                    await message.delete()
             if embed.image.url:
                 value = await url_detect.detect_from_url(embed.image.proxy_url , labels)
                 if value == False:
